@@ -202,6 +202,9 @@ void servoRight()
 }
 
 // ---------------------------------------  Sensor control
+/*  https://github.com/JRodrigoTech/Ultrasonic-HC-SR04/blob/master/Ultrasonic/Ultrasonic.cpp
+ *  https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
+*/
 void sensorSetup()
 {
   // Calculate the max reflection distance in us
