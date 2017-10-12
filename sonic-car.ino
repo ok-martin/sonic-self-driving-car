@@ -16,9 +16,9 @@
 
 // Declare servo variables
 #define ServoPin 8
-#define SC 150      // center positon
-#define SL 190      // left
-#define SR 80       // right
+#define SC 82       // center positon
+#define SL 180      // left
+#define SR 0        // right
 #define SWait 1000  // wait for the turn to complete
 Servo servoControl;
 
@@ -60,8 +60,39 @@ void setup()
 /*  Program Loop
  *  Detect for obstacles, if detected turn, else keep driving straight   
  */
+
+
+int maxWall = 40;
 void loop()
 {
+  
+  servoCenter();
+  if(readDistance() > maxWall)
+  {
+    servoLeft();
+    if(readDistance() > maxWall)
+    {
+      servoRight();
+      if(readDistance() > maxWall)
+      {
+        goStraight();
+      }
+      else
+      {
+        carTurn(SR);
+      }
+    }
+    else
+    {
+        carTurn(SL);
+    }
+  }
+  else
+  {
+    carTurn(SL);
+  }
+  /*
+  // occasianly turn left or tight (wherever the wall is)
   delay(50);
   goStraight();
   if(readDistance() > 20)
@@ -71,13 +102,15 @@ void loop()
   else
   {
     goStop();
-    servoRight();
+
+    servoLeft();
+    
     if(readDistance() > 20)
     {
       servoCenter();
       while(readDistance() <= 20)
       {
-        goRight();
+        goLeft();
       }      
     }
     else
@@ -85,9 +118,33 @@ void loop()
       servoCenter();
       while(readDistance() <= 20)
       {
-        goLeft();
+        goRight();
       }
     }
+  }*/
+}
+
+void carTurn(int dir)
+{
+  int centerDist = 0;
+  int sideDist = 0;
+  while((centerDist < maxWall) && (sideDist > (maxWall+5) || sideDist < (maxWall-5)))
+  {
+    if(dir == SR)
+    {
+      goLeft();
+    }
+    else
+    {
+      goRight();
+    }
+    delay(100);
+    goStop();
+    
+    servoCenter();
+    centerDist = readDistance();
+    servoTurn(dir);
+    sideDist = readDistance();
   }
 }
 
@@ -185,6 +242,11 @@ void travelStraight(int speed, double distance)
   digitalWrite(LMB, LOW);
 }
 // ---------------------------------------  Servo control
+void servoTurn(int deg)
+{
+  servoControl.write(deg);
+  delay(SWait);
+}
 void servoCenter()
 {
   servoControl.write(SC);
