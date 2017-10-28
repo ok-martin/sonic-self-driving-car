@@ -291,7 +291,7 @@ int readDistance()
   delay(100);
   return sonarSignal() != 0 ? sonarSignal() : NoEcho;
 }
-
+// sound filter values between 0 .. 60
 boolean sendOutSoundWave()
 {
   // set the trigger pin for the sensor to output
